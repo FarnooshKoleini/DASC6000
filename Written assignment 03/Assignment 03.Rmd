@@ -1,0 +1,500 @@
+---
+title: "Assignment 03"
+author: "Farnoosh Koleini"
+date: '2022-10-20'
+output: html_document
+---
+# Goals for the assignment
+
+The overarching goal for this assignment is to deepen your understanding of discrete and continuous random variables, probability mass function (PMF), probability density function (PDF), cumulative distribution function (CDF), expected values and inequalities.
+
+
+# Instructions
+
+Please type your response to a question right below the question text. Compile this document to generate PDF output. Upload your PDF document to Canvas. In the preamble above, change `V.N. Gudivada` to your name.
+
+\newpage
+# Questions
+
+1. A fair green die and a fair red die are tossed together. Let $X$ denote the number of spots showing on the green die and $Y$ denote the number of spots showing on the red die. Find the probability mass function for:
+    (a) the sum of the spots showing on the two dice, $X+Y$,
+    (b) the number of spots showing on the green die minus the number of spots showing on the red die, $X-Y$,
+    (c) the difference between the spots showing on the two dice, $|X-Y|$,
+    (d) the maximum number of spots showing on a single die, $\max \{X, Y\}$,
+    (e) the minimum number of spots showing on a single die, $\min \{X, Y\}$.
+    
+
+
+    (a) Let $Z=X+Y$    
+
+    **Solution**:
+    
+This question is kind of similiar to the previous ones because we are already familiar with the sample space and the random expriences. We have a red die and when we roll it, it is possible to get 1, 2, 3, 4, 5, and 6. Also, we have another die which is green and again when we roll it, again there are 6 possible choices like the red one. So the sample space when both of them are rolled would be a $6\times6$ matrix (36 equally likely events). The first thing is calculating the probability of mass functionb (PMF). And here the random varaibles are discrete random variables. We are going to creat a random variable, Z, which is the sum of two other random variables. $ Z = X + Y$. We need to find the PMF when we have this equation. We can simply write a code which creates this matrix. To find the PMF for Z, first we need the support for the random variable $A = \{2, 3, 4, ..., 12\}$. 
+$f(z) = 1/36 $ when  $z = 2$ , $f(z) = 2/36$ when $z = 3$, $f(z) = 3/36$ when $z = 4$, and .... $f(z) = 1/36$  when $z = 12$. So the PMF value would be $f_{Z}(z) = 6 - |Z - 7|/36$, $ z = 2,3,4,...,12$. 
+
+
+
+    ```{r}
+    elements <- c()
+    index <- 0
+    for (i in 1:6){
+      for (j in 1:6){
+        index <- index + 1
+        elements[index] = i + j
+      }
+    }
+    
+    mat <- matrix(elements, nrow = 6, ncol = 6, byrow=TRUE)
+    mat
+    ```
+    
+    (b) Let $Z=X-Y$    
+
+    **Solution**:
+    
+This code is really similiar to the previous ones but the only difference between these two is instead of $X+Y$ we have $X-Y$ here and the indexes would be $i - j$.  Again, what is the support here? $A = \{-5, -4, -2, -1, 0, 1, 2, 3, 4, 5\}$. So now we want to see what is the probability of each these values.
+$f(z) = 1/36 $ when  $z = -5$ , $f(z) = 2/36$ when $z = -4$, and .... $f(z) = 1/36$  when $z = 5$. If we want to write in one equation, it is going to be 
+$f_{Z}(z) = 6 - |Z|/36$, z = -5,-4,4,...,0,5. 
+
+    
+    ```{r}
+    elements <- c()
+    index <- 0
+    for (i in 1:6){
+      for (j in 1:6){
+        index <- index + 1
+        elements[index] = i - j
+      }
+    }
+    
+    mat <- matrix(elements, nrow = 6, ncol = 6, byrow=TRUE)
+    mat
+    ```
+
+    (c) Let $Z=|X-Y|$    
+    
+    **Solution**:
+
+This time we need to get the absolute values for the $X-Y$ so the PMF which we are looking for is $Z=|X-Y|$. The support here is $A = \{0, 1, 2, 3, 4, 5\}$. $f(z) = 6/36 $ when  $z = 0$ , $f(z) = 10/36$ when $z = 1, 2, 3, 4, 5$. So the probability mass function here is $f_{Z}(z) = 1/6$, $z = 0$ and $f_{Z}(z) = (12 - 2z)/36$,  z = 1,2,3,4,5.  
+    
+    ```{r}
+    elements <- c()
+    index <- 0
+    for (i in 1:6){
+      for (j in 1:6){
+        index <- index + 1
+        elements[index] = abs(i - j)
+      }
+    }
+    
+    mat <- matrix(elements, nrow = 6, ncol = 6, byrow=TRUE)
+    mat
+    ```
+
+    (d) Let $Z=\max \{X, Y\}$    
+    
+    **Solution**:
+
+This time we use max function and the sample space would be as follows. And the support here is $A = \{0, 1, 2, 3, 4, 5, 6\}$. 
+$f_{Z}(z) = (2z-1)/36 $ when z = 1, 2, 3, ..., 6. The pattern here is a little bit different with the previous ones. 
+    
+    ```{r}
+    elements <- c()
+    index <- 0
+    for (i in 1:6){
+      for (j in 1:6){
+        index <- index + 1
+        elements[index] = max(i, j)
+      }
+    }
+    
+    mat <- matrix(elements, nrow = 6, ncol = 6, byrow=TRUE)
+    mat
+    ```
+
+    (e) Let $Z=\min \{X, Y\}$    
+
+    **Solution**:
+ 
+This one is the minimum value of $X, Y$. The support here is $A = \{1, 2, 3, 4, 5, 6\}$. So the PMF value here is represented as follows: $f_{Z}(z) = (13-2z)/36 $ when z = 1, 2, 3, ..., 6.
+    
+    ```{r}
+    elements <- c()
+    index <- 0
+    for (i in 1:6){
+      for (j in 1:6){
+        index <- index + 1
+        elements[index] = min(i, j)
+      }
+    }
+    
+    mat <- matrix(elements, nrow = 6, ncol = 6, byrow=TRUE)
+    mat
+    ```
+
+I was curious to see what will happen if I choose three dies and I just modified the code for rolling two dies. I found the sample space and the support using this simple code! I liked that. 
+
+```{r}
+    elements <- c()
+    index <- 0
+    for (i in 1:6){
+      for (j in 1:6){
+        for (k in 1:6){
+        index <- index + 1
+        elements[index] = min(i, j, k)
+      }
+    }
+  }  
+    result <- array(elements, dim = c(6,6,6))
+    result
+    ```
+
+    
+    \hfill $\blacksquare$
+
+    \newpage
+1. A bag contains two black balls and three gold balls. Balls are removed from the bag at random and without replacement until the first black ball appears. Find the probability mass function of the random variable $X$, the number of gold balls that are sampled before the first black ball appears. 
+
+    **Solution**: 
+
+This bag just contains two different color balls. Balls are removed from the bag at random and without replacement until the first black ball appears. Find the probability mass function of the random variable $X$, the number of gold balls that are sampled before the first black ball appears. At first I want to find the support which is $A = \{0, 1,2,3\}$. So the PMF value here is represented as follows: $f_{Z}(z) = 2/5 $ when $x = 0$, $f_{Z}(z) = (3/5).(2/4) = 3/10 $ when $x = 1$, $f_{Z}(z) = (3/5).(2/4).(2/3) = 1/5 $ when $x =2$, $f_{Z}(z) = (3/5).(2/4).(1/3).(2/2) = 1/10$ when $x = 3$.
+
+   
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Find the cumulative distribution function associated with the following PDF:    
+
+    $$
+    f(x)= \begin{cases}x, & 0<x<1 \\ 2-x, & 1 \leq x<2\end{cases}
+    $$ 
+
+    **Solution**: 
+
+The cumulative distribution function has 4 segments. 
+    $$
+    F_{X}(x)= \begin{cases}0, & x\leq 0 \\ x^{2}/2, &  0<x<1 \\ -x^{2}/2+2x-3/2, & 1\leq x<2 \\ 1, & 2\leq x  \end{cases}
+    $$ 
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Michelle is dealt seven cards from a well-shuffled deck. Let the random variable $X$ denote the number of jacks in her hand.    
+
+    (a) Find $f(-1)$
+    
+    **Solution**:
+
+The support for this random variable is $A = \{0, 1,2,3,4\}$. There are 4 jacks and the number of ways to choose jacks is x. So then after choosing jacks, 48 cards remain.that based on the number of jacks we got, we can say how many cards we need to choose from the others. So now we can calculate the PMF which is 
+$f_{X}(x)$ = $\displaystyle 4 \choose x$.$\displaystyle 48 \choose 7-x$/$\displaystyle 52 \choose 7$ when x=0,1,2,3,4. So the probability of getting a -1 jack is 0.  
+
+    (b) Find $F(-1)$
+    
+    **Solution**:
+
+In the cumulative distribution function, the probability of getting the number of jacks less than or equal to -1. This probability is 0 too.     
+
+    (c) Find $F(5)$
+    
+    **Solution**:
+
+The cumulative distribution function when the you get 5 of less numbers of jacks would be 1.    
+
+    (d) Find $F(1)$
+
+    **Solution**:
+
+This requires some works. At first we need to compute the probability of when you get 1 or less numbers of jacks. It is a disjoint events, first getting 0 jacks and another one 1 jack. $P(X\leq 1) = P(X =0) + P(X= 1)$ This value is $\displaystyle 4 \choose 0$.$\displaystyle 48 \choose 7-x$/$\displaystyle 52 \choose 7$ + $\displaystyle 4 \choose 1$.$\displaystyle 48 \choose 7-x$/$\displaystyle 52 \choose 7$ = 0.91
+    
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Write a Monte Carlo simulation in $\mathrm{R}$ that estimates the $83\mathrm{rd}$ percentile of the distance between two random points in the interior of the unit cube. Conduct enough replications of the Monte Carlo experiment so that your estimate is accurate to three digits.
+
+    **Solution**: 
+
+We have a unit cube that its all dimensions are 1. The maximum distances is unit of the cube, 1. If we sort these points and we index into the vector. 
+
+
+    ```{r}
+    nrep <- 1000000
+    x1 <- runif(nrep)
+    y1 <- runif(nrep)
+    z1 <- runif(nrep)
+    x2 <- runif(nrep)
+    y2 <- runif(nrep)
+    z2 <- runif(nrep)
+    dist <- sqrt((x1-x2)^2 + (y1-y2)^2+ (z1-z2)^2)
+    sort(dist)[0.83 * nrep]
+    ```
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Let $X$ be a continuous random variable with support $\mathcal{A}=\{x \mid-2<x<4\}$. The quartiles of the distribution of $X$ are    
+
+    - $x_{0.25}=-1$ 
+    - $x_{0.5}=0$ 
+    - $x_{0.75}=1$
+    
+
+    The random variable $Y$ is defined as $Y=g(X)=3+|X|$. What is the population median of $Y?$
+
+    **Solution**: 
+
+It maybe looks quite difficult but it is kind of simple. Here we talk about first quartile, second quartile, and third quratile. (Each of them %25)
+If support is between -2 and 4 we can say the interval (-2,4). First quartile is from -2 to -1. The second quartile is between 0 and 1. Between -1 and 1, we have the subtraction of the first quartile from the second one. (%50 of the variable) Look at the 3 and 4. after mapping the value by adding 3 to them we find 4 is the median in this question. 
+
+
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. The random variable $X$ has the following PDF:    
+
+    $$
+    f_X(x)= \begin{cases}2 / 3, & -1<x \leq 0 \\ x^2, & 0<x<1 \end{cases}
+    $$    
+
+    Find the CDF of $Y=X^2$
+
+    **Solution**: 
+
+We can map this PDF to a line with specific regions. CDF is the function of the original random variable. CDF value can be calculated by integration from -1 to x and using a dummy variable. $F_{X}(x) = (2/3)x + 2/3 + x^{3}/3$
+    $$
+    F_{X}(x)= \begin{cases}0, & x\leq -1 \\ 2x/3 + 2/3, &  -1<x<0\\ 2/3 +x^{3}/3, & 0<x<1\\ 1, & 1\leq x  \end{cases}
+    $$ 
+Also the support for this problem is y when it is between 0 and 1. The CDF would be $F_{X}(y^{1/2}) - F_{X}(-y^{1/2}) = 2/3 + y^{3/2}/3 - (-2/3y^{1/2} + 2/3) = 1/3(y^{3/2} + 2y^{1/2}), 0\leq y< 1$.
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Let $x_1, x_2, \ldots, x_n$ be real-valued constants satisfying $x_1<x_2<\cdots<x_n$. A piecewise-linear CDF $F(x)$ for an associated random variable $X$ can be formed by connecting the points:    
+
+    $$
+    \left(x_1, 0\right),\left(x_2, \frac{1}{n-1}\right),\left(x_3, \frac{2}{n-1}\right), \ldots,\left(x_{n-1}, \frac{n-2}{n-1}\right),\left(x_n, 1\right)
+    $$    
+
+    with line segments.    
+    
+
+    (a) Find the associated PDF $f(x)$    
+
+    **Solution**:
+
+The first point here is $x_{1} = 0$ and there is another point, $x_{2}$, $x_{3}$, $x_{4}$, ..., all the way until $x_{n}$. If you draw a diagram of $F_{x}-x$ and connect all the data points. We have a cumulative distribution function which is piece-wised linear. So, likewise we have our cumulative distribution. They ask us to find the associated PDF. You can calculate the slope of the each line by thinking that the question is about continuous distribution. So the slope of the first line would be the differences between the Y values divided by the differences of X values which is $(n-1)^{-1}/(x_{2}-x_{1})$. Again we can compute the slope for other sections or lines. And for all of them is the same structure, $(n-1)^{-1}/(x_{i+1}-x_{i})$. 
+    
+    
+    (b) Find $E[X]$. Simplify your formula as much as possible.
+
+    **Solution**:     
+
+Now we want to calculate the expected value which is $E[X] = x.f(x) = \int x (n-1)^{-1}/(x_{i+1}-x_{i}) d_{x}$. After some simplifications we are going to get $\sum (x_{i+1} + x_{i})/2(n-1) = (1/(2(n-1))\sum(x_{i+1} + x_{i})=(1/(2(n-1))[x_{1} +2(x_{2}+x_{3}+ ...+x_{n})$
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Joseph draws balls successively at random from an urn which contains 30 red balls and 40 blue balls. Let the random variable $X$ be the trial number when the third red ball is drawn. Find $E[X]$ when
+
+    (a) sampling is performed with replacement
+
+    **Solution**:  
+    
+The value of random variable in this case is $X = 8$ when he gets the third Red ball in the 8th position which is $BBRBRBBR$. But he can be so lucky and get the third Red ball in the third position which is RRR. So how do you model this? We need some realizations and think about the scenarios. So with replacement, what is the probability of this scenario which you get all three Red balls sequentially. And you know that each trials are independent of each other that it means each outcome is not dependent on the previous one. So the probability of success is always $3/7$ also the probability of failure is always $4/7$. Now I want to represent the support for this question is $A = 3, 4,5,6,7,...$ The unluckiest condition for you is when you do not get any Red ball, so there is no last step. We can use Monte Carlo Simulation for this question too. The answer to this question would be $ \displaystyle x-1 \choose 2 $$(3/7)^{3}$$(4/7)^{x-3}$. In this question we are looking for the $E[X]$ which is $\sum x. f(x)$. For this question it would be 7. 
+
+    (b) sampling is performed without replacement
+
+    **Solution**:
+
+The answer for this question would be $(3/7)[1/(1-x)^2]$ and the $E[X]$ for this question  would be $E[Y_{1}] + E[Y_{2}] + E[Y_{3}] = 7/3 + 7/3 + 7/3 = 7$
+    
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Consider the continuous random variable $X$ with PDF    
+
+    $$
+    f(x)=c x^2, \quad-1<x<1
+    $$    
+
+    where $c$ is a real-valued constant.    
+
+    (a) Find $c$    
+
+    **Solution**:
+    
+$\int f(x)dx = 1$ for this question specifically would be $\int cx^{2}dx = 1$ which equals to $c\int x^2 dx =1$, $c[x^{3}/3] = 1$, $2c/3 =1$. So $c = 3/2$ and $f(x) = (2/3)x^{2}$, $-1 < x < 1$. 
+    
+    (b) Find $F(x)$. Plot $f(x)$ and $F(x)$    
+
+    **Solution**:
+    
+If we integrate the f(x), we will find the cumulative distribution function which is $F_{X}(x) = x^{3}/2 + 1/2$ for $x\leq 1$ the CDF would be 0 and for $-1<x<1$ the CDF would be $x^{3}/2 + 1/2$ and the last part is when $1\leq x$ that CDF is gonna be 1. You can create plots that they show this PDF and PMF. 
+    
+    (c) Find $E[X]$ and $V[X]$    
+
+    **Solution**:
+    
+$\mu = E[X] = \int x.f(x)dx = \int x.(3/2).x^{2}dx = 0 $  
+$V[X] = E[X^{2}] - (E[X])^{2}$ Based on the last calculation we we can simply delete the last part would be 0. So $E[X^{2}]$ would be $\int x^{2} . f(x)dx = \int x^{2}.(3/2).x^2dx= 3/5$ 
+
+
+    (d) Find $E\left[\left(\frac{X-\mu}{\sigma}\right)^3\right]$
+    
+    **Solution**:
+    
+$E[((x-\mu)/\sigma)^{3}] = (X-0)^3/(3/5)^{3/2}$ after some simplifications, the solution would be $(3/5)^{3/2}[3/12. x^{4}]$. We evaluate this from -1 to +1 and we will get 0. Therefore, skewness is 0 and this distribution is symmetric. 
+
+
+    (e) Find $P\left(X>\frac{1}{2} \mid X>\frac{1}{4}\right)$
+
+
+    **Solution**:
+
+What is the probability of A given B that is conditional probability. It would be the probability of their intersection divided by probability of the second one. If we want to calculate this, it is going to be $P(X> 1/2)/P(X>1/4)$. Using this principal the answer for this question would be $(1/2 - 1/16)/(1/2 -1/128)= 8/9= 0.8889$
+
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. A bag contains three balls numbered $-1,0$, and 2 . Two balls are sampled at random. Find the expected value of the product of the numbers on the two balls that are sampled when  
+
+    (a) sampling is performed without replacement    
+
+
+    **Solution**:
+
+Sampling is performed without replacement. This case is when you get (-1,0), the other probability would be (-1,2), and there is another one (0,2). For a we can write the probability in different conditions. $E[X] = x.f(x)$ for this question would be $(-2)1/3 + (0)(2/3) = -2/3$   
+    
+    (b) sampling is performed with replacement
+
+    **Solution**:
+
+Now we can calculate this one with replacement. For different x values, the f(x) would be a different value. $E[X] = 1/9$.     
+
+    ```{r}
+    nrep <- 100000
+    total <- 0
+    x <- c(-1,0,2)
+    for (i in 1: nrep){
+        y <- sample(x, 2)
+        total <- total + prod(y)
+    }
+    print(total / nrep)
+    ```    
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Consider a random variable $X$ with moment generating function:    
+
+    $$
+    M_X(t)=\frac{1}{2} e^{-c t}+\frac{1}{2} e^{c t} \quad-\infty<t<\infty
+    $$    
+
+    for some positive constant $c$. Find the value of $c$ so that $V[X]=1$.
+
+    **Solution**:
+    
+ We are going to derivative $d/dt(e^{ct}) = -C.e^{ct}$. $E[X] = \mu = m^{1}_{X} (0) = 0$ and $E[X^{2}] = m^{1}_{X} (0) = C^{2}$. So now if we want to calculate C; it's gonna be $1 = c^{2} -(0)^{2}$, since the positive value makes satisfied this equation, so $C = +1, -1$.
+
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Three married couples attend a dance. The women are paired with the men at random for one particular song. Let the random variable $X$ be the number of couples with the spouses dancing together for the song.
+    
+    (a) Find the probability mass function of $X$
+    
+    **Solution**:
+    
+Let's suppose $M = A, B, C$ and $W = a, b, c$, $X = 3$.
+Now we can write the support, $A = {0, 1, 3}$. So $f(x) = 2/6$ for $x=0$, and $f(x) = 3/6$ for $x = 1$, and $f(x) = 1/6$ for $x= 3$, and the summation would be 1.
+
+ 
+    (b) Find $E[X]$
+    
+    
+    **Solution**:
+
+$E[X] = (0)(1/3) + (1)(1/2) + (3)(1/6) = 1$   
+ 
+    (c) Find $V[X]$    
+    
+    **Solution**:
+    
+$(\sigma)^{2} = V[X] = \sum (x-\mu)^{2} f(x) = 1/6$   
+
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Jensen's inequality states that:    
+
+    $$
+    g(E[X]) \leq E[g(X)]
+    $$    
+
+    for a random variable $X$ and convex function $g$. On the other hand,    
+
+    $$
+    g(E[X]) \geq E[g(X)]
+    $$    
+
+    for a random variable $X$ and concave function $g$. Compute the value of both sides of Jensen's inequality for a random variable $X$ with PDF:    
+
+    $$
+    f(x)=1 \quad 0<x<1
+    $$    
+
+    and the convex function $g(X)=X^2$.    
+
+    **Solution**:
+    
+
+This one is a uniform PDF. We need to find the expected value $E[X]$. 
+$E[X] = \int x. dx = [x^2/2]=1/2$
+$g(E[x]) = (1/2)^2 = 1/4$
+$E[g(x)] = \int x^2.dx = [x^3/3] = 1/3$
+$1/4 \leq 1/3$
+$g(E[X]) \leq E[g(X)]$
+    
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. Find the value of both sides of Markov's inequality    
+
+    $$
+    P(X \geq a) \leq \frac{E[X]}{a}
+    $$    
+
+    for a random variable $X$ with the PDF:    
+
+    $$
+    f(x)=2 x \quad 0<x<1
+    $$
+    and $a=3 / 4$.    
+
+    **Solution**:
+    
+It is kind of similar to the previous question. In this case we have the probability in a special function and range. So now $P(3/4\leq X) =\int 2x.dx = [x^2]=1-9/16 = 7/16$
+$E[X] = \int x.2x.dx = (2/3)x^3 = 2/3$
+$E[X]/a = (2/3)/(3/4) = 8/9$     
+$P(a\leq X) \leq E[X]/a$
+$7/16 \leq 8/9$
+    
+    \hfill $\blacksquare$
