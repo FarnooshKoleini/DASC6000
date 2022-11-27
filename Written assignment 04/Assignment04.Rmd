@@ -1,0 +1,428 @@
+---
+title: "Assignment04"
+author: "Farnoosh Koleini"
+date: '2022-11-06'
+output:
+  html_document:
+    df_print: paged
+---
+
+# Assignment goal
+
+The overarching goal for this assignment is to assess your understanding of discrete probability distributions - Bernoulli, Binomial, Geometric, Negative Binomial, Poisson, Hypergeometric, Benford, Zipf, and mixtures.
+
+# Instructions
+
+Please type your response to a question right below the question text. Compile this document to generate PDF output. Upload your PDF document to Canvas. In the preamble above, change `V.N. Gudivada` to your name.
+
+
+# Questions
+
+1. A binomial random variable $X$ has population mean 3 and population variance $2.$ Compute $\mathbf{P}(X \leq 2)$. Also, verify your answer by computing $\mathbf{P}(X \leq 2)$ using R.
+
+    
+    **Solution**: 
+      
+Here in this question we use cumulative distribution function (CDF). $\mathbf{P}(X \leq 2)$ and 9 is the number of trials here. Also, $1/3$ is the probability of success. The question gave the mean which is 3 and variance which is 2. As we know $\mu = np -1$ and here the value of that is 3. In addition $\sigma^{2} = np(1-p)$ and here the value of that is 2. So we can solve this question and find the p. 
+
+$np(1-p) = 2$, 
+$3(1-p) = 2$,
+$1-p = 2/3$,
+$p = 1 - 2/3 = 1/3$
+
+Also we can find the n value here using $\mu$ value. 
+
+$np = 3$,
+$n(1/3) = 3$,
+$n = 9$
+
+To calculate the probability mass function (PMF). $f(x) = \displaystyle {9 \choose x} (1/3)^{3} (2/3)^{9-x}$ 
+
+So now the question wants the probability mass function of when X = 0, 1, 2. 
+$\mathbf{P}(X \leq 2) = \mathbf{P}(X= 0) + \mathbf{P} (X = 1) + \mathbf{P}(X=2) = 0.3772$ We can use pbinom in R and confirm this solution.
+
+
+    
+    ```{r}
+    pbinom(2, 9, 1/3)
+    ```
+
+    \hfill $\blacksquare$
+    
+    \newpage
+1. One version of the PowerBall lottery requires matching the numbers on five white balls, in any order, selected at random and without replacement from a drum containing 69 white balls numbered $1,2, \ldots, 69$, and matching an additional red "powerball" number selected at random from a second drum containing 26 red balls numbered $1,2, \ldots, 26.$
+
+    (a) What is the probability that one person who selects six numbers wins the PowerBall lottery?
+    
+    **Solution**:
+
+If you want to calculate all possible outcomes of power ball. This is the solution for that: 
+
+$\displaystyle {69 \choose 5} \displaystyle {26 \choose 1}$
+
+The main point here is that each one of them are equally likely event. So the probability of winning would be 
+
+$\frac {1}{\displaystyle {69 \choose 5} \displaystyle {26 \choose 1}}$,
+$\frac {1}{292201338}$
+
+
+    (b) If one thousand people purchase PowerBall lottery tickets simultaneously and each person makes a random selection for the six numbers, independent of any of the other gamblers, find the PMF of the number of winners.
+
+    
+    **Solution**:
+    
+Now we can actually say that the number of trials is 1000. The point here is that the probability of the success is fixed and it does not depend on the other participants. 
+
+The probability of mass function is:
+$f(x) = \displaystyle {1000 \choose x} (\frac {1}{292201338})^x$,
+We can easily compute this in R for each $x=0$, $x=1$, and $x=2$.
+    
+    ```{r}
+    dbinom(0:2,1000, 1/292201338)
+    ```
+
+    \hfill $\blacksquare$
+
+    \newpage
+    
+1. Article 3, Section 3 of the United States Constitution states that "The Vice President of the United States shall be President of the Senate, but shall have no Vote, unless they be equally divided." If the Senate consists of 100 Senators, and they vote on a particular bill based on the outcome of the flip of a fair coin (heads for a Yay vote, tails for a Nay vote), what is the probability that the Vice President will vote to break the tie vote? State the reasonableness of any assumptions made.    
+
+    **Solution**: 
+    
+Again here we have a binomial distribution. We have 100 senators in this case. $x= 1,2,3,..., 100$,
+
+$f(x) = \displaystyle {100 \choose x} (1/2)^x (1/2)^{100-x}$
+
+So now 50 people have voted yes and automatically 50 other people have voted nope. 
+
+So the PMF for x=50 can be calculated using this simple R code.
+    
+```{r}
+   dbinom(50, 100, 1/2)
+```
+
+    
+    \hfill $\blacksquare$
+    
+    \newpage
+1. There are 31 days in October. In a room of 35 people, what is the probability mass function of $X$, the number of October birthdays? Ignore leap years. Assume that there are no twins, triplets, etc. in the room and that each birthday is equally likely.    
+
+    **Solution**:
+
+This is again a binomial distribution, binomial(n,p). All of them are independent of each other. The first thing here is we need to represent X which is X = number of Oct. birth days. The second condition is looking at the outcomes which are was born in Oct or not. (We see a binomial condition here again!)
+
+Now we need to find the probability of success. $p = 31/365$
+
+$f(x) = \displaystyle {35 \choose x} (31/356)^{x} (1-31/365)^{35 - x}$
+
+    
+    \hfill $\blacksquare$    
+
+    \newpage
+1. Consider an $m$-member jury that requires $n$ or more votes to convict a defendant. Let $p$ be the probability that a juror votes a guilty person innocent and let $q$ be the probability that a juror votes an innocent person guilty, $0<p<1,0<q<1$. Assuming that $r$ is the fraction of guilty defendants and that jurors vote independently, what is:
+
+    (a) the probability a defendant is convicted?
+    
+    **Solution**: 
+
+Unfortunately what happens here is somebody who is not guilty is convicted. Probability of conviction is :
+
+$P(C) = P(C|G) P(G) + P(C|I).P(I)$ 
+$P(C) = r \sum \displaystyle {m \choose x} (1-p)^x p^{m-x} + (1-r)$ 
+$\sum \displaystyle {m \choose x} q^{x} (1-q)^{m-x}$
+    
+    (b) the probability a defendant is convicted when $n=9, m=12, p=1 / 4, q=1 / 5$, and $r=5 / 6$? Use $\mathrm{R}$ to calculate the result.    
+    
+    **Solution**: 
+    
+For this one, the solution is actually similar to the previous one but the main difference here is you can subtract the previous solution from 1. Also, there is the probability using R code:
+
+
+    This probability can be calculated in $\mathrm{R}$ with the statements:    
+
+    ```{r}
+    n <- 9 
+    m <- 12
+    p <- 1/4
+    q <- 1/5
+    r <- 5/6 
+    pconviction <- r * (1 - pbinom(n-1, m, 1-p)) + (1-r) * (1 - pbinom(n-1, m, q))
+    pconviction
+    ```  
+    \hfill $\blacksquare$
+    
+    
+    
+    \newpage 
+1. Let $X$ denote the number of tails prior to the first occurrence of a head in repeated tosses of a fair coin. Find $P(X \bmod 5=2)$. **Hint**: $X$ is a geometric random variable.
+   
+    **Solution**: 
+    
+Here what we need to do is finding the probability of x mod 5=2. $P(X=x) = f(x)$
+For geometric random variable, we know that x = 0,1,2,3,.... When you look at the X mod 5 = 2. The geometric random variable is $f(x) = P(1-P)^{x}$ when $x=0,1,2,3,...$
+
+So now we want to define what is the probability mass function, $f(x) = (1/2) (1/2)^{x} = (1/2)^{x+1}$. We are ready to calculate X mod 5 which is 2. 
+X mod 5 = 2,
+3 mod 5 = 2,
+7 mod 5 = 2,
+12 mod 5 = 2,
+17 mod 5 = 2
+
+$P(X mod 5 = 2) = P(X = 2) + P(X = 7) + P(X=12) +... = (1/2)^3 + (1/2)^8 + (1/2)^{13}$
+
+$(1/2)^{3} [1 + (1/2)^{5} + (1/2)^{10} + ...]$,
+$\frac {a}{1-r}$ and when $a = 1$ and $r = (1/2)^{5}$, if you simplify this equation: $(1/2)^{3} (1/(1 - (1/2)^{5}) = 4/31 = 0.1290$
+
+
+
+
+    \hfill $\blacksquare$
+
+    \newpage
+1. Let the random variable $X$ denote the number of independent rolls of a fair die required to obtain the second occurrence of a "five." Find $P(X \geq 4)$. **Hint**: $X$ is a negative Binomial random variable.
+
+    **Solution**: 
+    
+This is a negative binomial distribution. And we know that the failure and success are equally likely. $f(x) = \displaystyle {r+r-1 \choose r-1} p^{r} (1-p)^{x}$ where x = 0, 1, 2,...
+
+We have r successes and x failures. Then we need to write the $f(x) = \displaystyle {x-2-1\choose 2-1} (1/6)^{2}(1/6)^{x-2} = \displaystyle {x-1 \choose 1} (1/6)^{2}(1/6)^{x-2}$
+
+$P(4\leq X) = 1 - P(X\leq 3) = 1 - [p(X=2) + P(X=3)] = 1 - [(1/6)^{2} + (2)(1/6)^2 (5/6)^1] = 1 - 16/216 = 25/27 = 0.9259$
+
+    This probability can be calculated with the $R$ statement $1 \text { - pnbinom }(1,2,1/6)$
+    
+    ```{r}
+    1- pnbinom(1,2,1/6)
+    ```
+
+    The support of the negative binomial distribution in $R$ begins at 0, which accounts for the 1 as the first argument in the call to pnbinom().
+    
+    \hfill $\blacksquare$
+
+    \newpage    
+1. An automobile manufacturer is implementing a "zero-defects" drive in order to improve the quality of their automobiles. They have found that the number of manufacturing defects on each car follows a Poisson distribution. If their goal is to have at least 98 percent of their cars defect-free, find the largest population mean $\mu$ that achieves their goal. **Hint**: $X$ is a Poisson random variable.
+    
+    **Solution**:
+    
+First of all we need to find the probability mass function which is $f(x) =\frac{ (\lambda)^x e^{-\lambda}} {x!}$ where x = 0,1,2,3, ...
+
+$P(X = 0) = f(0) = e^{-\lambda} > 0.98 $,
+$e{-\lambda} = 0.98$,
+$ln(e{-\lambda}) = ln(0.98)$,
+$-\lambda = ln(0.98)$
+$\lambda = 0.02020$
+
+
+    
+    \hfill $\blacksquare$
+    
+    
+    \newpage
+1. The number of parking tickets issued daily is a Poisson random variable with population mean $15.$ Write the mathematical expression and use $R$ to find the probability that:
+
+    (a) exactly 17 tickets will be issued in one day
+
+    **Solution**:
+    
+$\lambda = 15$ so $\mu = 15$ and $\sigma^2 = 15$. So now it is time to write the probability mass function which is $f(x) = \frac {\lambda^x e^x}{x!}$.
+In this case lambda is 15 so the above equation will be $\frac {15^x e^{-15}} {x!}$. So $f(17) = 0.08474$.  
+
+    (b) 17 or more tickets will be issued in one day
+    
+    **Solution**:
+
+Here we wanted to calculate, what is the probability when $17 \leq X$. To calculate this probability: $\sum \frac {15^x e^{-15}}{x!}$. It is difficult to calculate this! $1 - \sum \frac {15^x e^{-15}}{x!} = 0.3359$
+
+    
+    (c) exactly 17 tickets will be issued in one day given that the population mean number of tickets was exceeded on that particular day
+    
+    **Solution**:
+
+To solve this question, we need to use conditional probability. The probability that exact 17 tickets will be issued in a particular day. $P(X = 17| X>15)$ and $P(A|B) = P(A\cap B)/ P(B)$, in this case: $P(X = (17 + X>15)/P(X>15)$. We know that X is already greater than 15. 
+
+$\frac {P(X= 17)}{P(X > 15)} = \frac {\frac {15^{17} e^{-15}}{\pi!}}{1 - P(X<15)}$
+
+$1 - \sum\frac {15^x e^{-15}}{x!} = 0.1962$
+
+
+
+    (d) 100 or fewer tickets will be issued in any five-day period. **Hint**: Assume that $Y$ be the random variable that represents the number of tickets issued in any five-day period.
+    
+    
+    **Solution**:
+
+Here in this case if $\lambda = 5 *15 = 75$. So now $f_Y(y) = \frac{75^y e^{-75}}{y!}$ where $y = 0,1,2,...$. $P(Y \leq 100) = \sum \frac {75^y e^{-75}}{y!} = 0.9976$ 
+
+```{r}
+ppois(100, 75)
+```
+
+    
+    \hfill $\blacksquare$
+
+    \newpage
+1. Perform the following calculations using the appropriate $R$ function for the distributions listed below.    
+
+    (a) Binomial:    
+
+    $$
+    \sum_{x=0}^3 \binom{8}{x} \left(\frac{3}{10}\right)^x\left(\frac{7}{10}\right)^{8-x}
+    $$    
+
+    **Solution**:    
+
+Here we have a binomial distribution, if we get three successes, the probability of that would be:
+
+```{r}
+pbinom(3,8, 3/10)
+```
+
+
+    (b) Geometric:    
+
+    $$
+    \sum_{x=2}^4 \left(\frac{1}{3}\right) \left(\frac{2}{3}\right)^x
+    $$    
+
+    **Solution**:    
+    
+This is a geometric random variable. We want to get a random variable here from 2 to 4. So we can easily use the simple code in R:
+
+```{r}
+pgeom(4,1/3) - pgeom(1, 1/3)
+```
+
+
+
+    (c) Poisson:    
+
+    $$
+    \frac{9^3 e^{-9}}{3 !}
+    $$    
+    
+
+    **Solution**:    
+
+This is going to be $\frac{\lambda^x e^{-\lambda}}{x!}$ where $\lambda = 9$ and $x=3$. We need to compute what is the probability when the parameter for the poisson distribution is 9 and x is equal to 3. 
+
+```{r}
+dpois(3, 9)
+```
+
+
+
+    \hfill $\blacksquare$
+
+
+    \newpage
+1. The probability generating function of a discrete random variable $X$ having support on the non-negative integers is:    
+
+    $$
+    G(t)=E\left[t^X\right]
+    $$    
+
+    Find the probability generating function of $X \sim \operatorname{Poisson}(\lambda)$. 
+
+    **Solution**:
+
+Here we need to find probability generating function of X, a random variable. The probability mass function is $f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$, where $x>0$. And the probability generating function is $G(t) = E[t^x] = \sum t^x . \frac{\lambda^x e^{-\lambda}}{x!} = e^{-\lambda} \sum \frac{(t\lambda)^x}{x!} = e^{-\lambda}[1 + \frac {t\lambda}{1!} + \frac{(t\lambda)^2}{2!} + \frac{(t\lambda)^3}{3!} + ...] = e^{\lambda t} e^{Xt} = e^{\lambda (t-1)}$
+    
+    \hfill $\blacksquare$
+    
+    
+    \newpage
+1. Let $X \sim$ Poisson $(\lambda)$. If $f_X(2)=f_X(3)$, find $E\left[X^2\right]$.    
+    
+    **Solution**: 
+
+We have a random variable X, and we know that the probability mass function is $f(x) = \frac{\lambda^x e^{-\lambda}}{x!}$. And here, if we compare these two we can find out that $\lambda = 3$ and $x = 2$. We want to find the variance which is $Variance = E[X^2] - (E[X])^2$, $E[X^2] = Variance + (E[X])^2 = \sigma^2 + \mu^2 = \lambda + \lambda^2 = 3 + 3^2 = 12$
+
+
+    
+    \hfill $\blacksquare$
+    
+
+    \newpage
+1. A random sample of size 12 is taken without replacement from a lot of 100 items that contains 8 defectives.    
+
+        (a) Find the probability that there are exactly two defectives in the sample.
+
+    **Solution**:
+
+This is a hyper geometric random variable has three parameters. The first parameter is 8 and the second one is 100 and the third one is the sample size which is 12. 
+
+$f(x) = \frac{\displaystyle {8 \choose x} \displaystyle {92 \choose 12 - x}}{\displaystyle {100 \choose 12}}$, where x = 0, 1, 2, ... . 
+
+$f(x) = \frac{\displaystyle {8 \choose 2} \displaystyle {92 \choose 10 }}{\displaystyle {100 \choose 12}} = 0.1992$
+
+$P(X \leq 2) = \sum f(x) = f(0) + f(1) + f(2) = 0.9470$
+
+```{r}
+phyper (2,8,92,12)
+```
+
+
+
+    
+        (b) Find the probability that there are two or fewer defectives in the sample.    
+
+    **Solution**:    
+
+Solved with part a of the question!
+    
+    \hfill $\blacksquare$
+    
+
+    \newpage
+1. Consider an infinite sequence of random variables $X_1, X_2, \ldots$, each drawn from a common probability density function $f_X(x)$.
+
+    (a) Find the probability that the leading digit is 8 (for example, $0.8629$ or $0.008435$ ) of any element of the sequence if $f_X(x)=1$ for $0<x<1$.
+
+    **Solution**: 
+
+$P(ld = 8) = P(0.8 \leq X \leq 0.9) + P(0.08 \leq x \leq 0.09) + P(0.008 \leq x \leq 0.009 + ... = \sum P(8.10 ^{-i} \leq x \leq 9.10^{-10})= \sum \int 1 dx = \sum 10^{-i} = 1/10 + 1/100 + 1/1000 +...$ 
+
+This is a geometric and the answer of that would be $\frac {a}{1-r}$ when $a, r= 1/10$ So the solution is $\frac {1/10}{1 - 1/10} = 1/9$
+
+    (b) Find the probability that the leading digit is 8 (for example, $0.8629$ or $0.008435$ ) of any element of the sequence if $f_X(x)=2 x$ for $0<x<1$.
+
+    **Solution**: 
+    
+
+When i goes from 1 to infinity, we have $\sum \int 2x.dx = \sum[x^2]$, when $8.10 ^{-i} \leq x \leq 9.10^{-10}$
+
+$\sum [17. 10^{-2i}]$, this is going to be a geometric series. Here $a = 17/100$ and $r = 1/100$ So $\frac{a}{1-r} = \frac {17/100}{1-1/120} = 17/99$
+
+    (c) Let $k$ be a positive integer. Let the random variable $Y$ be the sequence number of the $k$ th random variable that has leading digit 8 . Find $E[Y]$ when $f_X(x)=1$ for $0<x<1$.
+
+    **Solution**: 
+
+$K^{th}$ number with a leading digit 8 is a negative binomial with parameters k = 1/9. $E[y]=9k$.
+    
+    \hfill $\blacksquare$
+    
+    \newpage
+1. Determine whether each statement below is **true** or **false**.
+
+    (a) The binomial, negative binomial, and geometric distributions all have interpretations that can be formulated in terms of Bernoulli trials.
+
+    **Solution**: 
+
+This is True because if you look at the binomial, you have two outcomes binomial which are independent of each other, the probability of success does not depend to one outcome from another outcome. So this sentence is true. 
+
+    (b) The population variance is the expected distance between a random variable and its population mean.
+    
+
+    **Solution**: 
+    
+This is False because if you look at the $\sigma^2 = E[\frac{X-\mu}{\sigma}]$ 
+    
+    (c) For any random variable $X$, the random variable $Y=\lfloor X\rfloor$ is always a discrete random variable.
+    
+    **Solution**: 
+
+This is True, because for any random variable X, all the values can be mapped as a discrete random variable. 
+
+
+    \hfill $\blacksquare$
+    
