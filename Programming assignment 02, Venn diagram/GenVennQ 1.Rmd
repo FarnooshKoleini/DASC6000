@@ -1,0 +1,137 @@
+---
+title: "Venn diagram assigment"
+author: "Farnoosh Koleini"
+date: '2022-09-18'
+output: html_document
+---
+
+***Some warm up codes which contains simple venn diagrams, also the calculation of the unions of set intersections. And the next step using them for creating all the figures from set = 1 to 7.***
+
+```{r}
+library("venn")
+venn("A", snames = "A, B, C")
+venn("1--", ilabels = TRUE)
+venn(5)
+# a 5 sets Venn diagram using ellipses
+venn(5, ellipse = TRUE)
+# a 5 sets Venn diagram with intersection labels
+venn(5, ilabels = TRUE)
+# and a predefined color style
+venn(5, ilabels = TRUE, zcolor = "style")
+# a union of two sets
+venn("1---- + ----1")
+# with different colors
+venn("1---- , ----1", zcolor = "red, blue")
+
+```
+
+1) Another important example for this assignment is creating venn diagram for three sets as an example. And make a diagram which the intersection of those three sets is completely clear and colored with blue color.
+
+```{r}
+library('ggplot2')
+library('venn')
+library('grid')
+library('gridGraphics')
+intersections <- c('~A~B~C', '~A~BC', '~AB~C', '~ABC', 'A~B~C', 'A~BC', 'AB~C', 'ABC')
+#venn(intersections, zcolor = c("black","white","white","white", "white","black","white","blue"), sncs = .85, ilabels = TRUE, box = FALSE)
+grid.newpage()
+grid.roundrect(width = 0.95, height = 0.95, gp=gpar(fill="grey"))
+grid.echo(function()
+               venn(intersections, box = FALSE, borders = FALSE,
+               zcolor= c("grey","white","white","white", "white","grey100","white","blue"), opacity=1),
+           newpage=FALSE)
+
+``` 
+
+GenVennQ function:
+
+```{r}
+
+genVennQ <- function(nset, rnumber, sets){
+        intersections = getAllConnections(nset)
+        intersectionRegionColors = getIntersectioncolors(nset, rnumber)
+        bColor <- ""
+        
+        if (rnumber == 2^nset){
+               bColor <- "blue"
+        } else {
+        
+                bColor <- "white"
+        }
+grid.roundrect(width= 0.99, height= 0.99, gp=gpar(fill=bColor))   
+
+grid.echo(
+        function()
+                
+                venn(intersections,
+                     zcolor=intersectionRegionColors, 
+                     box = FALSE, borders= F, opacity = 1, fill = bColor)
+)
+}
+
+```
+
+
+2) This main example shows all the Venn diagrams up to seven sets labeled and colored with special style. To create all of these diagrams at first we needed to install required libraries the most important one venn package. The main point here is instead of using venn function 7 times, it just needs to make a simple for loop! 
+
+```{r}
+#install.packages("venn")         # Install & load venn package
+library("venn")
+
+numset <- c(1:7)
+for (i in numset){
+        venn(i, ilabels = TRUE, zcolor = "style")
+}
+```
+
+
+3)Second thing that I was curious to test was calculating the union(s) of set intersections. We can use a special function which uses a metacommand to calculate the shape of a specific zone or a list of zones. As an example, we tested this function for 3 sets in a venn diagram and then 5 sets. The arguments, area, snames, and ellipse are defined as follows:
+
+area: a character expression written in sum of products form.
+snames: a string containing the sets' names, separated by commas.
+ellipse: Logical, get the zones from the shape of an ellipse, where possible
+
+
+```{r}
+venn(3)
+area <- getZones("A", snames = "A, B, C")
+# a list of length 1
+polygon(area[[1]], col="lightblue")
+# The very same result is obtained with:
+zone <- getZones("1--")
+# for 5 sets, the content of the 5th set but not in the first set is a
+# list of two zones
+venn(7)
+zones <- getZones("0-----1")
+# this time a list of length 2
+# (re)coloring the first zone (union)
+polygon(zones[[1]], col="lightblue")
+# and the second zone (union)
+polygon(zones[[2]], col="lightblue")
+
+```
+
+4) When I was looking for answers to my questions on the internet. I found a really good tutorial on this package, because we had more time, I was so interested in working on the more specific parts beyond the assignment we have. As an example I brought this following simple code which focuses on some artistic version of the venn diagrams. That's really amazing!!!
+
+```{r}
+# artistic version
+venn(c("1000000", "0100000", "0010000", "0001000",
+"0000100", "0000010", "0000001", "1111111"))
+# without all borders
+venn(c("1000000", "0100000", "0010000", "0001000",
+"0000100", "0000010", "0000001", "1111111"),
+borders = FALSE)
+
+```
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
