@@ -1,0 +1,436 @@
+---
+title: "Written Assignment 02"
+author: "Farnoosh Koleini"
+date: '2022-10-16'
+output: html_document
+---
+
+# Goals for the assignment
+
+The overarching goal for this assignment is to deepen your understanding of random experiments, sample spaces, events, probability axioms, computing probabilities, conditional probability, Bayes rule, independent events and mutual independence.
+
+
+# Instructions
+
+Please type your response to a question right below the question text. Compile this document to generate PDF output. Upload your PDF document to Canvas. In the preamble above, change `V.N. Gudivada` to your name.
+
+\newpage
+# Questions
+
+1. Let $E, F$, and $G$ be three events satisfying: $E \cap F=\emptyset, E \cap G \neq \emptyset$, and $F \cap G \neq \emptyset$, where $\emptyset$ is the null set. Draw a Venn diagram to illustrate the following equality.
+
+    $$
+    \mathbb{P}(E \cup F \cup G) = \mathbb{P}(E) + \mathbb{P}(F) + \mathbb{P}(G) - \mathbb{P}(E \cap G) - \mathbb{P}(F \cap G)
+    $$
+
+    **Solution**:
+
+We have three sets, E,G, and F. If you look at the intersection of E and F there is no intersection between them so it is a null set. E and G have an intersection, and lastly F and G do intersect with each other. Now we need to prove the probability of union of these three sets. This union includes E, G, and F completely but the intersection of E and G consider two times one time with E and another time with G, so we need to subtract this intersection one time. Also there is another intersection between G and which counts two times one time with G and second time with F, so we need to subtract this intersection one time. So we can prove this using a Venn diagram. 
+
+```{r, echo=FALSE, out.width = "75%", fig.align = "center"}
+        knitr::include_graphics("VENN1.png")
+```
+    \hfill $\blacksquare$
+
+    \newpage
+1. The formula for $\mathbb{P}\left(A_1 \cup A_2\right)$ involves three terms:
+    $$
+    \mathbb{P}\left(A_1 \cup A_2\right) = \mathbb{P}\left(A_1\right) + \mathbb{P}\left(A_2\right) - \mathbb{P}\left(A_1 \cap A_2\right)
+    $$
+    The formula for $\mathbb{P}\left(A_1 \cup A_2 \cup A_3\right)$ involves seven terms. How many terms are in the formula for $\mathbb{P}\left(A_1 \cup A_2 \cup \ldots \cup A_n\right)$? Simplify your solution as much as possible.
+
+    **Solution**:
+
+This is called the principal of exclusion and inclusion.Here when we have two sets. The formula is provided in the question. So now for n sets how many terms we have for this principal? Based on the above formula for just two sets, we're gonna have 3 terms. The probability of first set, the second set, and the intersection. So based on the number of sets we can find the number of terms for this formula. There is a formula for that would be 2 to the power of number of sets (n) - 1. Also, we will use binomial theorem too. 
+
+  $2^n - 1$ = $\displaystyle{n\choose 1}$ + $\displaystyle{n\choose 2}$ + $\displaystyle{n\choose 3}$ + ... + $\displaystyle{n\choose n}$
+  
+  
+    \hfill $\blacksquare$
+
+    \newpage  
+1. Five fair dice are rolled. Find the probability that exactly two identical even numbers and exactly three identical odd numbers are rolled. The rolls 44555 and 61161 are examples of such rolls.
+
+
+    **Solution**: 
+    
+We define an event E, so the sample size would be: $6^5$ because for each random rolling a dice, there are 6 possible solutions: ${1, 2, 3, 4, 5, 6}$. If we want to get two even numbers and identical like 45455. Also to prove our solution for this question we are able to use Monte Carlo simulation. 
+
+So let's go back to the question again, we need exactly the same even numbers. How many choices we have? Actually we need just one even number. If we roll a die, there are three numbers so we can choose one of these three numbers. We have five positions for this question. 
+
+$\displaystyle{3\choose 1}$ $\displaystyle{5\choose 2}$ $\displaystyle{3\choose 1}$ $\displaystyle{3\choose 3}$ = 0.01147
+
+
+    
+    ```{r, echo=TRUE}
+    # 
+    x <- sample(6,5, replace=TRUE)
+    print(x)
+    ```
+    
+    
+    
+
+    We perform a Monte Carlo simulation to lend support for the analytical solution.
+    
+    ```{r, echo=TRUE}
+    # verbose version with print statements
+    # number of times to repeat the random experiment
+    nrep <- 100000    
+
+    # counter to keep track of how exactly many times we got
+    # two even numbers and three odd numbers
+    success <- 0    
+
+    for (i in 1:nrep){
+      
+      # capture the roll outcomes into two lists
+      # one for even numbers and another for odd numbers
+      evenOutcomes <- c()
+      oddOutcomes <- c()
+      
+      # roll the six-sided die five times
+      for (j in 1:5){
+          x <- sample(6,1)
+          if (x%%2 == 0)
+            evenOutcomes <- append(evenOutcomes, x)
+          else
+            oddOutcomes <- append(oddOutcomes, x)
+      }
+      
+      # print(evenOutcomes)
+      # print(oddOutcomes)
+      
+      if ( (length(evenOutcomes > 0)) & (length(oddOutcomes > 0)) ){
+        if ( (length(evenOutcomes) == 2) & (length(oddOutcomes) == 3) & (evenOutcomes[1] == evenOutcomes[2]) & (oddOutcomes[1] == oddOutcomes[2]) & (oddOutcomes[2] == oddOutcomes[3]) ){
+        success <- success + 1
+        }
+      }
+    }
+    cat(sprintf("P(A): %f\n", success/nrep))
+    ```
+
+    \hfill $\blacksquare$
+
+
+    
+    \newpage   
+1. A survey of the schedules of 100 college freshmen reveals that
+
+    - 46 of the schedules contain a calculus class,
+    - 45 of the schedules contain an English class,
+    - 23 of the schedules contain a psychology class,
+    - 18 of the schedules contain both a calculus class and an English class,
+    - 7 of the schedules contain both a calculus class and a psychology class,
+    - 9 of the schedules contain both an English class and a psychology class,
+    - 2 of the schedules contain all three classes.
+
+    a. How many people are enrolled in exactly two of the three types of classes?
+    
+        **Solution**: 
+        
+We can map this problem in a Venn diagram. This Venn diagram includes three sets, calculus, English, and Psychology. So then based on the information about number of members for each set and the intersection between both different groups; we can build a Venn diagram with these information. Now the question is how many students are enrolled in exactly two of the three types of classes? Based on the Venn diagram, 5 students have Psycho and Calculus, 16 students have Calculus and English, and 7 students have English and Psycho. So the answer for this question would be $16 + 7 + 5 = 28$  
+        
+        
+    b. If one of the 100 schedules is chosen at random, find the probability that the schedule will contain no calculus class, no English class, and no psychology class.
+    
+        **Solution**: 
+
+We need to find $(C\cup E \cup P )^1$ which means who are not enrolled in any classes. The answer for this union would be $1- (C\cup E\cup P) = 1 -82 = 18$ and the probability for this would be $P(b) = 0.18$ 
+        
+    c. If ten different schedules are selected at random from the 100 schedules, find the probability that exactly six of the schedules include a calculus class.
+    
+        **Solution**: 
+
+How many students take calculus class? $23 + 2 + 5 +16 = 46$ You want to select only 6 of all of them. So the answer for this question would be 
+$\displaystyle{46\choose 6} \displaystyle{54\choose 4} / \displaystyle{100\choose 10} = 0.1711$  
+
+    \hfill $\blacksquare$
+    
+
+    
+    \newpage    
+1. A bag contains $n$ balls numbered $1,2, \ldots, n$, where $n$ is an integer that is greater than or equal to 3.
+
+    a. If two balls are drawn from the bag at random with replacement, find the probability that the sum of the numbers drawn is less than or equal to $n$.
+
+    **Solution**: 
+   
+For example $ n = 6$, in this question we have two different balls drawn from the bag. Now you want to find the probability sum of the numbers would be less than or equal to 3. So, the probability would be $ 3/ 36 = 0.083 $.  This probability formula would be $ (n-1)/2n $. (The point here is finding this probability with replacement)  
+
+    
+
+    b. If two balls are drawn from the bag at random without replacement, find the probability that the sum of the numbers drawn is less than or equal to $n$.
+
+    **Solution**: 
+    
+Now the question is finding the probability that the sum of the numbers drawn is less than or equal to $n$ but the point which is different with the previous section is without replacement.
+So the diagonal numbers of the 6*6 matrix do not occur. We need to do another calculation here.
+The formula would be $(n^2-n)/2$ when $n=6$ is 15. So there is another way to show this concept using $ \displaystyle{n\choose 2}$. Therefore, we are keeping upper triangle space and the probability if m is equal or less than n. The denominator should be the sample space which is $n(n-1)/2$. So in generally there are two cases, when m is an even number and when m is an odd number. In even case, m can be 4 or 6. When m is equal to 4. The probability of the sum equals or less than 4 would be 0.13. Also the probability of the situation when the sum is less than or equals to 6 would be 0.6. Now we want to focus on the part which m is an odd number. So now what is the probability of the situation that the m is equal or less than 3 would be 0.06 and the probability of the situation when m is equal or less than 5 would be 0.26. 
+
+    
+
+    c. Find the limit as $n \rightarrow \infty$ of your answers to parts (a) and (b).
+
+    **Solution**: 
+
+In the previous section, we talked about this and find the limit.    
+    
+    
+    \hfill $\blacksquare$
+    
+    \newpage    
+1. Consider a $10 \times 10$ matrix that consists of all zeros. Ten elements of the matrix are selected at random and their value is changed from a zero to a one. Find the probability that the ones fall in a line (row-wise, column-wise, or diagonally).
+
+    
+    **Solution**: 
+
+We have $10 \times 10$ matrix. All elements are zero. So we have 100 elements in total. Here we have 100 slots and we just want to select 10 slots of them (The sample space). All of the possible diagonal slots turn to one. This probability would be so small. It is approximately $1.2709 \times 10^-12$ 
+    
+    
+    \hfill $\blacksquare$
+    
+    
+    \newpage    
+1. Consider the events $E, F$, and $G$ with the following attributes:
+    - $\mathbb{P}(E)=0.37, \mathbb{P}(F)=0.23, \mathbb{P}(G)=0.18$,
+    - $\mathbb{P}(E \cap F)=0.10, \mathbb{P}(E \cap G)=0.07, \mathbb{P}(F \cap G)=0.05$,
+    - $\mathbb{P}(E \cap F \cap G)=0.04$
+    
+    Find
+    
+    (a) $\mathbb{P}\left(E \mid F^{\prime}\right)$
+    
+    **Solution**:  
+
+We can use a Venn diagram. This formula would be $P(E \cap F')$ / $P(F') = 0.27/(1 - 0.23) = 0.35$ 
+    
+    (b) $\mathbb{P}(E \cap F \mid G)$
+    
+    **Solution**:    
+
+Again we can use a Venn diagram to find the answer for this question. $P(E \cap F \cap G)/ P(G) = 0.04 / 0.18 = 0.22$    
+    
+    (c) $\mathbb{P}\left(E \cap F^{\prime} \mid F \cap G\right)$
+
+    **Solution**:
+
+This one equals: $P(E \cap F' \cap F \cap G) / P(F \cap G) / P(F \cap G)$ The nominator is impossible event and F' is everything outside of F. Outcome can not be a member of F and F'. So this event is impossible and the probability of this event is going to be 0. 
+    
+    \hfill $\blacksquare$    
+    
+    \newpage    
+1. The events $A$ and $B$ are disjoint and the events $B$ and $C$ are independent. Which of the following statements must be true?
+
+    (a) The events $A$ and $C$ must be disjoint
+    
+    **Solution**:   
+    
+We have three events, A, B , and C. Events A and B are disjoint. So it means these two events are not independent and if an outcome belongs to A it can not belong to B because they are disjoint. Often students are confused about disjointedness and in-dependency. In this question events B and C are independent which means they have intersection, but we do not know the level of this intersection. This is one scenario! The other scenario would be A and B do not have the intersection but both of them have individual intersections with C. So this sentence " The events $A$ and $C$ must be disjoint" not necessarily true. 
+
+
+    (b) The events $A$ and $C$ must be independent
+    
+    **Solution**:
+
+This sentence is not necessarily true.     
+    
+    (c) $\mathbb{P}(A)>\mathbb{P}(C)$
+    
+    **Solution**:
+
+This sentence is not necessarily true.
+    
+    (d) $\mathbb{P}(C)>\mathbb{P}(A)$
+    
+    **Solution**:
+
+This one is not necessary true.    
+    
+    (e) $\mathbb{P}\left(A \cup(B \cap C)^{\prime}\right)=1-\mathbb{P}(B) \mathbb{P}(C)$
+
+    **Solution**:
+    
+This one is necessarily true for scenario A. This one can be simplify to $ (1- P(B).P(C)) / (1- P(B).P(C)) $ When B and C are independent. Therefore $ (1- P(B).P(C)) = 1 - P(B \cup C)$.
+
+For scenario B, this sentence would be $ (1- P(B).P(C)) / (1- P(B).P(C)) $ Therefore again this sentence is necessarily true. 
+    
+    \hfill $\blacksquare$
+    
+    
+    \newpage    
+1. Each patient that arrives to an emergency department is classified as either critical, serious, or stable. Using previous data, a hospital administrator estimates that:
+
+    - $10 \%$ of the patients arrive in critical condition,
+    - $20 \%$ of the patients arrive in serious condition, and
+    - $70 \%$ of the patients arrive in stable condition.
+    Furthermore, also using previous data,
+    - $10 \%$ of the patients who arrive in critical condition die,
+    - 5\% of the patients who arrive in serious condition die, and
+    - $1 \%$ of the patients who arrive in stable condition die.
+
+    Given that an emergency department patient has died, find the probability that they were classified as being in stable condition when they arrived to the emergency department.
+    
+    **Solution**: 
+
+$ P(C) = 0.1$ and $P(E) = 0.2$ and $ P(S) = 0.7$. Let's say we define the probability of D $ P(D)$ but we do not know what that is? Also, the conditional probability of the D when C happens, $ P(D | C) = 0.1$ and $ P(D | E) = 0.05$ and lastly $ P(D | S) = 0.01$. Now based on these information the $ P(S|D) =  ?$  which is $P(S\cap D)/ P(D) = P(D|S).P(S)/P(D)$. So the denominator is $P(D) = P(D|C).P(C) + P(D|E). P(E)+ P(D|S). P(S)$ and the nominator is $P(D|S).P(S)$. The answer would be $ P(S|D) = 0.2593$. 
+    
+    \hfill $\blacksquare$
+    
+    \newpage    
+1. A bag contains 12 red balls and 8 blue balls. A fair die is rolled and that number of balls are sampled without replacement at random from the bag. Find the probability that the number that was rolled was a 2 given that all of the balls sampled were red.
+
+    **Solution**: 
+
+We have a bag contains 12 red balls and 8 blue balls. The question is what is the probability when the number is rolled two and evidence is all the balls sampled were red. R = all sampled balls are red. $A_1$ rolling a fair die = 1 and $A_2$ rolling a fair die = 2 and ... $A_6$ rolling a fair die = 6. Now the question is " What is the $P(A_2|R) =? $  This is a joint probability: $P(A_2|R) = P(A_2\cap R)/ P(R) = P(R|A_2).P(A_2)/P(R)$. 
+
+$P(A_2) = 1/6$,
+$P(R|A_2) = (12/20).(11/19)$,
+$P(R) = P(R|A_1).P(A_1) + P(R|A_2).P(A_2) + P(R|A_3).P(A_3) + P(R|A_4).P(A_4) + P(R|A_5).P(A_5) + P(R|A_6).P(A_6)$,  
+
+$P(A_1) = P(A_2) = P(A_3) = P(A_4) = P(A_5) = P(A_6) = 1/6$,
+$P(R|A_1) = (12/20).(1/6)$,
+$P(R|A_2) = (12/20).(11/19)$,
+$P(R|A_3) = (12/20).(11/19).(10/18)$,
+$P(R|A_4) = (12/20).(11/19).(10/18).(9/17)$,
+$P(R|A_5) = (12/20).(11/19).(10/18).(9/17).(8/16)$,
+$P(R|A_6) = (12/20).(11/19).(10/18).(9/17).(8/16).(7/15)$,
+
+$P(R) = 0.2637$
+
+    
+    \hfill $\blacksquare$    
+    
+    
+    \newpage    
+1. Consider the following experiment involving three urns. Urn $i$ contains 2 amber balls and $i$ black balls, for $i=1,2,3$. A ball is drawn at random from Urn 1 and transferred to Urn 2. A ball is then drawn at random from Urn 2 and transferred to Urn 3. Finally, a ball is drawn at random from Urn 3. Find the probability that the ball drawn from Urn 3 is black.
+    
+    **Solution**: 
+
+The probability of amber ball in the first bag is 2/3 and black ball is 1/3. The probability of getting amber and black ball in the second bag really depends on what you got from the first bag. $B_1$ means getting a black ball from the first bag, $B_2$ means getting a black ball from the second bag, $B_3$ means getting a black ball from the third bag. On the other hand $B'_1$ is not getting a black ball from the first bag. $B'_2$ is not getting a black ball from the second bag. $P(B_3) = ?$
+
+One scenario is getting a black ball from the first bag is $B_1$ and not getting a black ball from the second bag, $B'_2$. Another scenario would be $(B_1,B_2)$. Another scenario is $(B'_1, B_2)$. The last possible scenario is $(B'_1,B'_2)$.
+
+$P(B_3) = P(B_3|B_1 \cap B_2). P(B_1 \cap B_2) + P(B_3|B_1 \cap B'_2).P(B_1 \cap B'_2) + P(B_3|B'_1 \cap B_2).P(B'_1 \cap B_2) + P(B_3|B'_1 \cap B'_2).P(B'_1 \cap B'_2) = (4/6).(1/3).(3/5) + (3/6).(2/5).(1/3) + (4/6).(2/5).(2/3) + (3/6).(3/5).(2/3) = 26/45 = 0.5278$
+
+The answer is: $P(B_1 \cap B_2) = P(B_2|B_1).P(B_1)$
+    
+    \hfill $\blacksquare$    
+    
+    \newpage    
+1. Suzette is taking an $n$-question multiple choice exam in which each question has $m$ possible responses, only one of which is correct. For each question:
+
+    - with probability $1 / 3$ she is certain of the correct response,
+    - with probability $1 / 3$ she guesses amongst the $m$ responses,
+    - with probability $1 / 3$ she guesses amongst 2 responses (she can eliminate all but two of the responses).
+    Her responses to the questions are mutually independent events.
+
+
+    (a) On an individual question, find the probability that she answers the question correctly.
+
+    **Solution**:
+
+Based on the provided information there are 3 scenarios. The first one is when the response is correct. Another scenario is when she guesses. 
+
+$P(R) = P(R|C).P(C) + P(R|G).P(G) + P(R|E).P(E) = (1).(1/3) + (1/m).(1/3) + (1/2).(1/3) = (3m + 2)/6m$
+    
+
+    (b) On an individual question, find the probability that she knew the answer given that she answered the question correctly.
+
+    **Solution**:
+
+$P(C|R) = P(R|C)P(C)/P(R) = 2m/(3m+2)$
+
+    (c) Find the probability that she gets a perfect score on the exam.
+
+    **Solution**:
+
+When she answers all the questions correctly! $((3m+2)/6m)^n$
+
+
+    (d) Find the probability that she gets exactly $x$ correct responses on the exam.
+    
+    **Solution**:
+
+If you think tree-based method; she answers the first question for example: TRUE or FALSE, she can answer the second question TRUE or FALSE, and lastly she can answer the third one TRUE or FALSE. If she answers three questions all correctly, the probability of that would be $((3m+2)/6m)^3$. Another scenario is when she gets two correct answers and 1 incorrect answer, the probability of this is $((3m+2)/6m)^2 (1 - (3m+2)/(6m))^1$. And two incorrect answer plus one correct answer is $((3m+2)/6m)^1 (1 - (3m+2)/(6m))^2$. Lastly when she answers all questions incorrectly $(1 - (3m+2)/(6m))^3$. So the general answer for this question is $\displaystyle{n\choose x}((3m+2)/6m)^x (1 - (3m+2)/(6m))^{(n-x)}$. (Here $n=3$)
+
+
+    \hfill $\blacksquare$
+    
+    
+    \newpage    
+1. Show that if $A_1, A_2, \ldots, A_n$ are independent events, then
+    $$
+    \mathbb{P}\left(A_1 \cup A_2 \cup \ldots \cup A_n\right)=1-\prod_{i=1}^n\left[1-\mathbb{P}\left(A_i\right)\right]
+    $$
+
+    
+    **Solution**: 
+    
+$P(A \cup B) = 1 - P(A \cap B)$ 
+$P(A_1 \cup A_2 \cup A_3 \cup ... \cup A_n) = 1 - P(A_1).P(A_2)...P(A_n)= 1 - [(1-P(A'_1))(1-P(A'_2))...(1-P(A'_n))]= 1- \prod [1-P(A'_i)]$
+    
+    \hfill $\blacksquare$    
+    
+    
+    \newpage    
+1. Determine whether each statement below is true or false.
+
+    (a) If events $A_1, A_2, A_3$ partition a sample space, then events $A_1$ and $A_2$ are independent.
+ 
+    **Solution**:
+
+We have three events here! $A_1$ and $A_2$ are independent. This sentence is False because if something happens in $A_1$ it does bot happen in $A_2$ and $A_3$.     
+    
+    (b) If events $A_1, A_2, A_3$ partition a sample space, then events $A_1$ and $A_2$ are disjoint.
+
+    **Solution**: 
+    
+This one is TRUE.     
+    
+    (c) If $A_1, A_2, A_3$ are pairwise independent events, then $A_1, A_2, A_3$ are mutually independent events.
+
+    **Solution**:  
+
+This sentence is FALSE. All of them should be independent not just pairwise.   
+    
+    (d) For any two events $A$ and $B$, if $\mathbb{P}(A)>0, \mathbb{P}(B)>0$, and $A$ and $B$ are independent, then $A$ and $B$ cannot be disjoint.
+
+    **Solution**:  
+
+This sentence is TRUE. 
+    
+    (e) For any two disjoint events $A$ and $B, \mathbb{P}(A)+\mathbb{P}(B)=1$.
+
+    
+    **Solution**: 
+
+This one is FALSE.     
+    
+    \hfill $\blacksquare$
+    
+    \newpage    
+1. Four conditions must be satisfied in order to conclude that the events $A_1, A_2$, and $A_3$ are mutually independent:
+
+    $$
+    \mathbb{P}\left(A_1 \cap A_2\right)=\mathbb{P}\left(A_1\right) \mathbb{P}\left(A_2\right), \mathbb{P}\left(A_1 \cap A_3\right)=\mathbb{P}\left(A_1\right) \mathbb{P}\left(A_3\right), \mathbb{P}\left(A_2 \cap A_3\right)=\mathbb{P}\left(A_2\right) \mathbb{P}\left(A_3\right),
+    $$
+
+    and
+    
+    $$
+    \mathbb{P}\left(A_1 \cap A_2 \cap A_3\right)=\mathbb{P}\left(A_1\right) \mathbb{P}\left(A_2\right) \mathbb{P}\left(A_3\right)
+    $$
+    
+    How many conditions must be satisfied in order to conclude that the events $A_1, A_2, \ldots, A_n$ are mutually independent?
+
+    
+    **Solution**:
+
+We have three mutually independent events. We need to do look at them two by two. For $n=3$.
+$\displaystyle{n\choose n} + \displaystyle{n\choose n-1} + ...+ \displaystyle{n\choose 2}$
+$\displaystyle{n\choose 0} + \displaystyle{n\choose 1} + \displaystyle{n\choose 2} + ... + \displaystyle{n\choose n} = 2^n$
+
+$1 + n + \displaystyle{n\choose 2} + \displaystyle{n\choose 3} + ... + \displaystyle{n\choose n} = 2^n-n-1$ When $n=3$ the answer to this question is $2^3-3-1 = 8-3-1 =4$
+    
+    \hfill $\blacksquare$    
